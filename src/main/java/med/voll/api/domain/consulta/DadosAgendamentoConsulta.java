@@ -8,7 +8,7 @@ import med.voll.api.domain.medico.Especialidade;
 
 public record DadosAgendamentoConsulta(
 		
-		@NotNull
+		
 		Long idMedico,
 		
 		@NotNull
