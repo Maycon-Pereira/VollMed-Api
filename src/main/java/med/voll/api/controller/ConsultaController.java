@@ -9,32 +9,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import med.voll.api.domain.consulta.AgendaDeConsultas;
+import med.voll.api.domain.consulta.ConsultaService;
 import med.voll.api.domain.consulta.DadosAgendamentoConsulta;
 import med.voll.api.domain.consulta.DadosCancelamentoConsulta;
+import med.voll.api.domain.consulta.DadosDetalhamentoConsulta;
 
 @RestController
-@RequestMapping("consultas")
+@RequestMapping("api/v1/consultas")
 @SecurityRequirement(name = "bearer-key")
 public class ConsultaController {
-	
-	@Autowired
-	private AgendaDeConsultas agenda;
-	
+    private final ConsultaService _consultaService;
+    @Autowired
+    public ConsultaController(ConsultaService consultaService) {
+        _consultaService = consultaService;
+    }
 
-	@PostMapping
-	@Transactional
-	public ResponseEntity agendar(@RequestBody @Valid DadosAgendamentoConsulta dados) {
-		var dto = agenda.agendar(dados);
-		return ResponseEntity.ok(dto);
-	}
-	
-	@DeleteMapping
-	@Transactional
-	public ResponseEntity cancelarConsulta(@RequestBody @Valid DadosCancelamentoConsulta dados) {
-		agenda.cancelar(dados);
-		return ResponseEntity.noContent().build();
-	}
+    @PostMapping
+    public ResponseEntity<DadosDetalhamentoConsulta> agendar(@RequestBody @Valid DadosAgendamentoConsulta dadosAgendamentoConsulta){
+        var dto = _consultaService.agendarConsulta(dadosAgendamentoConsulta);
+        return ResponseEntity.ok(dto);
+    }
+    @DeleteMapping
+    public ResponseEntity<Void> cancelamento(@RequestBody @Valid DadosCancelamentoConsulta dadosCancelamentoConsulta){
+        _consultaService.cancelamentoConsulta(dadosCancelamentoConsulta);
+
+        return ResponseEntity.noContent().build();
+    }
 }

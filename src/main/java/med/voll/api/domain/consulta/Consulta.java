@@ -1,7 +1,5 @@
 package med.voll.api.domain.consulta;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -20,34 +18,34 @@ import lombok.NoArgsConstructor;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.paciente.Paciente;
 
+import java.time.LocalDateTime;
+
+@Entity
 @Table(name = "consultas")
-@Entity(name = "Consulta")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Consulta {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "medico_id")
+    private Medico medico;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "medico_id")
-	private Medico medico;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paciente_id")
+    private Paciente paciente;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "paciente_id")
-	private Paciente paciente;
+    private LocalDateTime data;
 
-	private LocalDateTime data;
+    @Column(name = "motivo_cancelamento")
+    @Enumerated(EnumType.STRING)
+    private MotivoCancelamento motivoCancelamento;
 
-	@Column(name = "motivo_cancelamento")
-	@Enumerated(EnumType.STRING)
-	private MotivoDoCancelamento motivoCancelamento;
-
-	public void cancelar(MotivoDoCancelamento motivo) {
-		this.motivoCancelamento = motivo;
-	}
-
+    public void cancelar(MotivoCancelamento motivoCancelamento) {
+        this.motivoCancelamento = motivoCancelamento;
+    }
 }
