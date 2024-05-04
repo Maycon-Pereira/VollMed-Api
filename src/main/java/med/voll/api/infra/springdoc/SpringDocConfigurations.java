@@ -24,7 +24,7 @@ public class SpringDocConfigurations {
                         .bearerFormat("JWT")))
                 .info(new Info()
                     .title("Voll.med API")
-                .description("API Rest da aplicação Voll.med, contendo as funcionalidades de CRUD de médicos e de pacientes, além de agendamento e cancelamento de consultas")
+                .description("API Rest da aplicação Voll.med, contendo as funcionalidades de CRUD de médicos e de pacientes, além de agendamento e cancelamento de consultas.  :  email para testes: ana.souza@voll.med senha para testes: 123456")
                     .contact(new Contact()
                     .name("Time Backend")
                     .email("backend@voll.med"))
