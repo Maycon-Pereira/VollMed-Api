@@ -1,39 +1,35 @@
 package med.voll.api.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import med.voll.api.domain.consulta.ConsultaService;
+import med.voll.api.domain.consulta.AgendaDeConsultas;
 import med.voll.api.domain.consulta.DadosAgendamentoConsulta;
 import med.voll.api.domain.consulta.DadosCancelamentoConsulta;
-import med.voll.api.domain.consulta.DadosDetalhamentoConsulta;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1/consultas")
+@RequestMapping("consultas")
 @SecurityRequirement(name = "bearer-key")
 public class ConsultaController {
-    private final ConsultaService _consultaService;
+
     @Autowired
-    public ConsultaController(ConsultaService consultaService) {
-        _consultaService = consultaService;
-    }
+    private AgendaDeConsultas agenda;
 
     @PostMapping
-    public ResponseEntity<DadosDetalhamentoConsulta> agendar(@RequestBody @Valid DadosAgendamentoConsulta dadosAgendamentoConsulta){
-        var dto = _consultaService.agendarConsulta(dadosAgendamentoConsulta);
+    @Transactional
+    public ResponseEntity agendar(@RequestBody @Valid DadosAgendamentoConsulta dados) {
+        var dto = agenda.agendar(dados);
         return ResponseEntity.ok(dto);
     }
-    @DeleteMapping
-    public ResponseEntity<Void> cancelamento(@RequestBody @Valid DadosCancelamentoConsulta dadosCancelamentoConsulta){
-        _consultaService.cancelamentoConsulta(dadosCancelamentoConsulta);
 
+    @DeleteMapping
+    @Transactional
+    public ResponseEntity cancelar(@RequestBody @Valid DadosCancelamentoConsulta dados) {
+        agenda.cancelar(dados);
         return ResponseEntity.noContent().build();
     }
+
 }

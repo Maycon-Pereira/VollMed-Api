@@ -7,22 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValidadorPacienteSemOutraConsultaNoDia implements ValidadorAgendamentoConsulta {
-    private final ConsultaRepository _consultaRepository;
+public class ValidadorPacienteSemOutraConsultaNoDia implements ValidadorAgendamentoDeConsulta {
+
     @Autowired
-    public ValidadorPacienteSemOutraConsultaNoDia(ConsultaRepository consultaRepository) {
-        _consultaRepository = consultaRepository;
-    }
+    private ConsultaRepository repository;
 
-
-    @Override
     public void validar(DadosAgendamentoConsulta dados) {
         var primeiroHorario = dados.data().withHour(7);
         var ultimoHorario = dados.data().withHour(18);
-
-        var pacientePossuitOutraConsultaNoDia = _consultaRepository.existsByPacienteIdAndDataBetween(dados.idPaciente(), primeiroHorario, ultimoHorario);
-        if(pacientePossuitOutraConsultaNoDia){
+        var pacientePossuiOutraConsultaNoDia = repository.existsByPacienteIdAndDataBetween(dados.idPaciente(), primeiroHorario, ultimoHorario);
+        if (pacientePossuiOutraConsultaNoDia) {
             throw new ValidacaoException("Paciente já possui uma consulta agendada nesse dia");
         }
     }
+
 }

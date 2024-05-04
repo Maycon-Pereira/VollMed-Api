@@ -10,26 +10,31 @@ import java.time.LocalDateTime;
 public interface MedicoRepository extends JpaRepository<Medico, Long> {
     Page<Medico> findAllByAtivoTrue(Pageable paginacao);
 
-    @Query(value = """
-    SELECT m FROM Medico m
-    WHERE
-        m.ativo = TRUE AND
-        m.especialidade = :especialidade AND
-        m.id NOT IN(
-            SELECT c.medico.id FROM Consulta c
-            WHERE
-            c.data = :data AND
-            c.motivoCancelamento is NULL
-    )
-    ORDER BY RANDOM()
-    LIMIT 1
-    """)
+
+    @Query("""
+            select m from Medico m
+            where
+            m.ativo = true
+            and
+            m.especialidade = :especialidade
+            and
+            m.id not in(
+                select c.medico.id from Consulta c
+                where
+                c.data = :data
+                and
+                c.motivoCancelamento is null
+            )
+            order by rand()
+            limit 1
+        """)
     Medico escolherMedicoAleatorioLivreNaData(Especialidade especialidade, LocalDateTime data);
 
-    @Query("SELECT m.ativo FROM Medico m WHERE m.id = :id")
-    boolean findAtivoById(Long id);
-    @Query("SELECT COUNT(m) > 0 FROM Medico m WHERE m.crm = :crm")
-    Boolean existisByCrm(String crm);
-    @Query("SELECT COUNT(m) > 0 FROM Medico m WHERE m.email = :email")
-    Boolean existisByEmail(String email);
+    @Query("""
+            select m.ativo
+            from Medico m
+            where
+            m.id = :id
+            """)
+    Boolean findAtivoById(Long id);
 }

@@ -7,18 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValidadorPacienteAtivo implements ValidadorAgendamentoConsulta {
-    private final PacienteRepository _pacienteRepository;
+public class ValidadorPacienteAtivo implements ValidadorAgendamentoDeConsulta {
 
     @Autowired
-    public ValidadorPacienteAtivo(PacienteRepository pacienteRepository) {
-        _pacienteRepository = pacienteRepository;
-    }
+    private PacienteRepository repository;
 
-    @Override
     public void validar(DadosAgendamentoConsulta dados) {
-        var pacienteAtivo = _pacienteRepository.findAtivoById(dados.idPaciente());
-        if (!pacienteAtivo){
+        var pacienteEstaAtivo = repository.findAtivoById(dados.idPaciente());
+        if (!pacienteEstaAtivo) {
             throw new ValidacaoException("Consulta não pode ser agendada com paciente excluído");
         }
     }

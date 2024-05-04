@@ -7,24 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValidadorMedicoAtivo implements ValidadorAgendamentoConsulta {
-    private final MedicoRepository _medicoRepository;
+public class ValidadorMedicoAtivo implements ValidadorAgendamentoDeConsulta {
 
     @Autowired
-    public ValidadorMedicoAtivo(MedicoRepository medicoRepository) {
-        _medicoRepository = medicoRepository;
-    }
+    private MedicoRepository repository;
 
-    @Override
     public void validar(DadosAgendamentoConsulta dados) {
-        // medico opcional
-        if(dados.idMedico() == null){
+        //escolha do medico opcional
+        if (dados.idMedico() == null) {
             return;
         }
 
-        var medicoEstaAtivo = _medicoRepository.findAtivoById(dados.idMedico());
-        if(!medicoEstaAtivo){
-            throw new ValidacaoException("Consulta não pode ser agendad com médico inativo");
+        var medicoEstaAtivo = repository.findAtivoById(dados.idMedico());
+        if (!medicoEstaAtivo) {
+            throw new ValidacaoException("Consulta não pode ser agendada com médico excluído");
         }
     }
+
 }
